@@ -242,19 +242,19 @@ const ClassManagement = () => {
           <thead>
             <tr>
               <th>NO</th>
-              <th>클래스 ID </th>
-              <th>일정 ID</th>
-              <th>1차 카테고리</th>
-              <th>2차 카테고리</th>
-              <th>강사 ID</th>
-              <th>강사명</th>
-              <th>클래스명</th>
-              <th>가격</th>
-              <th>등록 최소 인원</th>
-              <th>등록 최대 인원</th>
-              <th>개설일</th>
-              <th>상태</th>
-              <th>액션</th>
+              <th style={{width: '80px'}}>클래스 ID </th>
+              <th style={{width: '80px'}}>일정 ID</th>
+              <th style={{width: '120px'}}>1차 카테고리</th>
+              <th style={{width: '120px'}}>2차 카테고리</th>
+              <th style={{width: '100px'}}>강사 ID</th>
+              <th style={{width: '100px'}}>강사명</th>
+              <th style={{width: '300px'}}>클래스명</th>
+              <th style = {{width: '100px'}}>가격</th>
+              <th style={{width: '100px'}}>등록 최소 인원</th>
+              <th style={{width: '100px'}}>등록 최대 인원</th>
+              <th style={{width: '100px'}}>개설일</th>
+              <th style={{width: '100px'}}>상태</th>
+              <th style={{width: '100px'}}>액션</th>
             </tr>
           </thead>
           <tbody>

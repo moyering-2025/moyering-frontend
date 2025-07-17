@@ -422,6 +422,15 @@
     color: #000 !important;
     border: 1px solid #000 !important;
   }
+
+  .btn-settlementHY.request {
+  background-color: #8b5cf6; /* 보라색 */
+  color: white;
+}
+
+.btn-settlementHY.request:hover {
+  background-color: #7c3aed;
+}
 }
 
 /* 18. 툴팁 스타일 (향후 사용) */

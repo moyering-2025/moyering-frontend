@@ -390,14 +390,14 @@ const BannerManagement = () => {
         <table className="tableHY banner-table">
           <thead>
             <tr>
-              <th>No.</th>
-              <th>배너 ID</th>
-              <th>배너 이미지</th>
-              <th>제목</th>
-              <th>내용</th>
-              <th>상태</th>
-              <th>등록일자</th>
-              <th>액션</th>
+              <th style={{ width: '50px' }}>No.</th>
+              <th style={{ width: '50px' }}>배너 ID</th>
+              <th style={{ width: '350px' }}>배너 이미지</th>
+              <th style={{ width: '200px' }}>제목</th>
+              <th style={{ width: '300px' }}>내용</th>
+              <th style={{ width: '100px' }}>상태</th>
+              <th style={{ width: '100px' }}>등록일자</th>
+              <th style={{ width: '100px' }}>액션</th>
             </tr>
           </thead>
           <tbody>
@@ -423,7 +423,7 @@ const BannerManagement = () => {
                 <img 
                   src={getBannerImageUrl(banner.bannerImg)} 
                   alt={banner.title}
-                  style={{width: '60px', height: '40px', objectFit: 'cover'}}
+                  style={{width: '100%', objectFit: 'cover'}}
                   onError={(e) => {
                     console.error('이미지 로드 실패:', e.target.src);
                     e.target.style.display = 'none';
@@ -456,7 +456,7 @@ const BannerManagement = () => {
                   <td>
                     <div className="action-buttons">
                       <button 
-                        className="btn-editHY"
+                        className="btn-edit"
                         onClick={() => handleEdit(banner.bannerId || banner.id)}
                       >
                         수정

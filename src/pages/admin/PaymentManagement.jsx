@@ -194,18 +194,18 @@ const PaymentManagement = () => {
           <thead>
             <tr>
               <th>No</th>
-              <th>결제번호</th>
-              <th>주문번호</th>
-              <th>수강생 ID</th>
-              <th>클래스명</th>
-              <th>클래스금액</th>
-              <th>쿠폰 유형</th>
-              <th>할인 유형</th>
-              <th>할인금액/비율</th>
-              <th>총 결제 금액</th>
-              <th>결제 유형</th>
-              <th>결제 상태</th>
-              <th>결제일시</th>
+              <th style={{ width: '80px' }}>결제번호</th>
+              <th style={{ width: '150px' }}>주문번호</th>
+              <th style={{ width: '100px' }}>수강생 ID</th>
+              <th style={{ width: '300px' }}>클래스명</th>
+              <th style={{ width: '80px' }}>클래스금액</th>
+              <th style={{ width: '50px' }}>쿠폰 유형</th>
+              <th style={{width: '50px'}}>할인 유형</th>
+              <th style={{width: '80px'}}>할인금액/비율</th>
+              <th style={{width: '80px'}}>총 결제 금액</th>
+              <th style={{width: '70px'}}>결제 유형</th>
+              <th style={{width: '80px'}}>결제 상태</th>
+              <th style={{width: '130px'}}>결제일시</th>
             </tr>
           </thead>
           <tbody>
@@ -215,7 +215,7 @@ const PaymentManagement = () => {
                 <td>{p.paymentId}</td>
                 <td>{p.orderNo}</td>
                 <td>{p.studentId}</td>
-                <td>{p.className}</td>
+                <td className='classNameHy'>{p.className}</td>
                 <td>{formatAmount(p.classAmount)}원</td>
                 <td>{p.couponType || '-'}</td>
                 <td>{p.discountType || '-'}</td>

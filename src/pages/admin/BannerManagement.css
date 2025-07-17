@@ -109,28 +109,27 @@
   transition: all 0.2s ease;
 }
 
-.status-visible {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #bbf7d0;
+.status-hidden {
+  background-color: #f0f8ff;
+  color: #4682b4;
+  border: 1px solid #e6f3ff;
 }
 
 .status-visible:hover {
-  background-color: #bbf7d0;
+  background-color: #e6f3ff;
   transform: translateY(-1px);
 }
 
-.status-hidden {
-  background-color: #fecaca;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
+.status-visible {
+  background-color: #fdf2f8;
+  color: #be185d;
+  border: 1px solid #fce7f3;
 }
 
-.status-hidden:hover {
-  background-color: #fca5a5;
+.status-visible:hover {
+  background-color: #fce7f3;
   transform: translateY(-1px);
 }
-
 /* 액션 버튼 */
 .action-buttons {
   display: flex;

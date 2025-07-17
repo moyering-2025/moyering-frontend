@@ -63,6 +63,14 @@
   display: block;        /* inline-block이 아니라 block이면 margin auto가 먹힘 */
   margin: 0 auto;        /* 수평 중앙 정렬 */
 }
+.tableHY td button.notice-publish-btnHY{
+  /* border: none; */
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  background: none;
+  font-size: 15px;;
+}
+
 .payment-btnHY:hover {
   background-color: #FFB22C;
   

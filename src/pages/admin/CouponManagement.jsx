@@ -493,17 +493,17 @@ const CouponManagement = () => {
           <thead>
             <tr>
               <th>No</th>
-              <th>쿠폰 ID</th>
-              <th>쿠폰 구분</th>
-              <th>유형</th>
-              <th>쿠폰코드</th>
-              <th>할인</th>
-              <th>사용/발급</th>
-              <th>쿠폰 시작일</th>
-              <th>쿠폰 종료일</th>
-              <th>쿠폰 생성일</th>
-              <th>상태</th>
-              <th>관리</th>
+              <th style={{ width: '60px' }}>쿠폰 ID</th>
+              <th style={{ width: '80px' }}>쿠폰 구분</th>
+              <th style={{ width: '70px' }}>유형</th>
+              <th style={{ width: '100px' }}>쿠폰코드</th>
+              <th style={{ width: '100px' }}>할인</th>
+              <th style={{ width: '80px' }}>사용/발급</th>
+              <th style={{ width: '80px' }}>쿠폰 시작일</th>
+              <th style={{ width: '80px' }}>쿠폰 종료일</th>
+              <th style={{ width: '80px' }}>쿠폰 생성일</th>
+              <th style={{ width: '50px' }}>상태</th>
+              <th style={{ width: '100px' }}>관리</th>
             </tr>
           </thead>
           <tbody>

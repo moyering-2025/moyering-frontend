@@ -199,6 +199,7 @@ const MemberManagement = () => {
                           {member.userType}
                         </span>
                       </td>
+                    
                       <td>{member.username}</td>
                       <td>{member.name}</td>
                       <td>{member.email}</td>

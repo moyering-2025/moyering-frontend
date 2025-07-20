@@ -389,13 +389,13 @@ const handleConfirmSettlement = async (settlementId, stats) => {
                       item.settlementStatus === 'WT' || 
                       item.settlementStatus === 'WP' || 
                       item.settlementStatus === 'RQ') ? (
-           <button 
-  className={`btn-settlementHY ${item.settlementStatus === 'RQ' ? 'request' : ''}`}
-  onClick={() => handleSettlement(item)}
-  disabled={loading}
->
-  {item.settlementStatus === 'RQ' ? '정산요청' : '정산하기'}
-</button>
+                            <button 
+                              className={`btn-settlementHY ${item.settlementStatus === 'RQ' ? 'request' : ''}`}
+                              onClick={() => handleSettlement(item)}
+                              disabled={loading}
+                            >
+                              {item.settlementStatus === 'RQ' ? '정산요청' : '정산하기'}
+                  </button>
                     ) : (
                       <span className="action-disabledHY">
                         {(item.settlementStatus === 'CP') ? '정산완료' : '처리완료'}

@@ -26,7 +26,9 @@ const Dashboard = () => {
     '월별': [],
     '분기별': [],
     '년도별': []
-  });
+  })
+
+
 
   useEffect(() => {
     token && myAxios(token, setToken).get("/api/dashBoard")
@@ -46,15 +48,55 @@ const Dashboard = () => {
         setTodaySettle(res.data.todaySettle);
         setMainChartData(prev => ({
           ...prev,
-          '월별': res.data.monthlyStats || [],
-          '분기별': res.data.resultQuater || [],
-          '년도별': res.data.resultYear || [],
+          '월별': res.data.monthlyStats,
+          '분기별': res.data.resultQuater,
+          '년도별': res.data.resultYear,
         }))
       })
       .catch(err => {
         console.log(err);
       })
-  }, [token]);
+  }, [token])
+
+  // '월별': Object.entries(openClass).map(([key,value])=>({
+  //       label:String(key).padStart(2,'0')+'월',
+  //       value:value
+  //     })),
+
+
+  // 메인 차트 데이터 (기간별)
+  //class - 월별 생성 클래스 수 student - 총클래스수 - 확정되지않은클래스 수(검수,폐강,반려(거절)을 제외한 수)   rate - 
+  // const mainChartData = {
+  //   '월별': [
+  //     { label: '01월', class: 900, student: 750, rate: 83 },
+  //     { label: '02월', class: 950, student: 800, rate: 84 },
+  //     { label: '03월', class: 1100, student: 900, rate: 82 },
+  //     { label: '04월', class: 1200, student: 1000, rate: 83 },
+  //     { label: '05월', class: 1300, student: 1100, rate: 85 },
+  //     { label: '06월', class: 1350, student: 1150, rate: 85 },
+  //     { label: '07월', class: 1400, student: 1200, rate: 86 },
+  //     { label: '08월', class: 1500, student: 1300, rate: 87 },
+  //     { label: '09월', class: 1600, student: 1400, rate: 88 },
+  //     { label: '10월', class: 1700, student: 1500, rate: 88 },
+  //     { label: '11월', class: 1750, student: 1550, rate: 89 },
+  //     { label: '12월', class: 1800, student: 1600, rate: 89 }
+  //   ],
+  //   '분기별': [
+  //     { label: '1분기', class: 3000, student: 2500, rate: 83 },
+  //     { label: '2분기', class: 3800, student: 3200, rate: 84 },
+  //     { label: '3분기', class: 4500, student: 3900, rate: 87 },
+  //     { label: '4분기', class: 5300, student: 4650, rate: 88 }
+  //   ],
+  //   '년도별': [
+  //     { label: '2020년', class: 12000, student: 10000, rate: 83 },
+  //     { label: '2021년', class: 14000, student: 12000, rate: 86 },
+  //     { label: '2022년', class: 16000, student: 14000, rate: 88 },
+  //     { label: '2023년', class: 18000, student: 16000, rate: 89 },
+  //     { label: '2024년', class: 20000, student: 18000, rate: 90 }
+  //   ]
+  // };
+
+
 
   // 트렌드 차트 데이터 (기간별)
   const trendData = {
@@ -73,59 +115,34 @@ const Dashboard = () => {
   };
 
   // 현재 차트 데이터 가져오기
-  const currentMainData = mainChartData[mainChartPeriod] || [];
-  const currentTrendData = trendData[trendChartPeriod] || [];
+  const currentMainData = mainChartData[mainChartPeriod];
+  const currentTrendData = trendData[trendChartPeriod];
 
-  // 최대값 계산 - Y축 스케일 조정으로 바를 더 높게 표시
-  const rawMaxClass = currentMainData.length > 0 ? Math.max(...currentMainData.map(d => d.class || 0)) : 100;
-    const maxStudent = Math.max(...currentMainData.map(d => d.student));
-  // 최대값을 작게 설정해서 바가 더 높게 보이도록 조정
-  const maxClass = rawMaxClass <= 10 ? rawMaxClass + 2 : Math.ceil(rawMaxClass * 0.7);
-  const maxTrend = currentTrendData.length > 0 ? Math.max(...currentTrendData.map(d => d.value || 0)) : 100;
+  // 최대값 계산 (차트 스케일링용)
+  const maxClass = Math.max(...currentMainData.map(d => d.class));
+  const maxStudent = Math.max(...currentMainData.map(d => d.student));
+  const maxTrend = Math.max(...currentTrendData.map(d => d.value));
 
-  // 높이 계산 함수 - 더 극단적으로 높게 조정
-  const getBarHeight = (value, max) => {
-    if (!value) return '15%';
-    // 비율을 더 크게 해서 바가 훨씬 높게 보이도록
-    const percentage = (value / max) * 80; // 80%까지 사용
-    return `${Math.max(percentage, 40) + 5}%`; // 최소 45% 보장
+  // 높이 계산 함수
+  const getBarHeight = (value, max) => `${(value / max) * 80 + 10}%`;
+  const getTrendHeight = (value, max) => 120 - (value / max) * 100;
+
+  // SVG 라인 포인트 생성
+  const generateLinePoints = (data, max, isRate = false) => {
+    const width = 400;
+    const stepX = width / (data.length - 1);
+
+    return data.map((item, index) => {
+      const x = index * stepX + 20;
+      const value = isRate ? item.rate : item.student;
+      const y = isRate ?
+        120 - (value / 100) * 80 : // 비율은 0-100 기준
+        120 - (value / max) * 80;
+      return `${x},${y}`;
+    }).join(' ');
   };
 
-  const getTrendHeight = (value, max) => {
-    if (!value || !max) return 120;
-    return 120 - (value / max) * 100;
-  };
-
-  // 좌표 계산 함수들 - 완전히 새로 계산
-  const getBarChartXCoord = (index, total) => {
-    // 바 차트 컨테이너의 실제 너비에서 패딩을 제외한 영역
-    const chartPadding = 12; // CSS의 padding과 맞춤
-    const availableWidth = 100 - (chartPadding * 2); // 퍼센트 기준
-    const barGroupWidth = availableWidth / total;
-    return chartPadding + (index * barGroupWidth) + (barGroupWidth / 2);
-  };
-
-  const getSVGXCoord = (index, total, svgWidth = 440) => {
-    // SVG 좌표계에 맞춰 계산
-    const padding = 40; // SVG 내부 패딩
-    const chartWidth = svgWidth - (padding * 2);
-    const stepWidth = chartWidth / (total - 1);
-    return padding + (index * stepWidth);
-  };
-
-  const getSVGYCoord = (value, max, svgHeight = 160, isPercentage = false) => {
-    if (!value || !max) return svgHeight - 20;
-    const padding = 20;
-    const chartHeight = svgHeight - (padding * 2);
-    
-    if (isPercentage) {
-      return svgHeight - padding - ((value / 100) * chartHeight);
-    } else {
-      return svgHeight - padding - ((value / max) * chartHeight);
-    }
-  };
-
-    // 좌표 계산 함수들
+  // 좌표 계산 함수들
   const getXCoord = (index, total, width = 400, margin = 20) => {
     return (index * width / (total - 1)) + margin;
   };
@@ -182,6 +199,14 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* <div className="stat-cardHY">
+          <div className="stat-iconHY">👁️</div>
+          <div className="stat-contentHY">
+            <div className="stat-labelHY">강사 신청 건</div>
+            <div className="stat-valueHY blue">10</div>
+          </div>
+        </div> */}
+
         <div className="stat-cardHY">
           <div className="stat-iconHY">👁️</div>
           <div className="stat-contentHY">
@@ -197,9 +222,17 @@ const Dashboard = () => {
             <div className="stat-valueHY blue">{todaySettle}</div>
           </div>
         </div>
+
+        {/* <div className="stat-cardHY">
+          <div className="stat-iconHY">👥</div>
+          <div className="stat-contentHY">
+            <div className="stat-labelHY">신고 건</div>
+            <div className="stat-valueHY blue">3</div>
+          </div>
+        </div> */}
       </div>
 
-      {/* 메인 차트 - 클래스 수만 표시 */}
+      {/* 메인 차트 - 동적 데이터 */}
       <div className="main-chart-sectionHY">
         <div className="chart-containerHY">
           <div className="chart-headerHY">
@@ -228,63 +261,129 @@ const Dashboard = () => {
 
           <div className="chart-contentHY">
             <div className="chart-y-axisHY">
-              <span>{Math.round(rawMaxClass * 1.0).toLocaleString()}</span>
-              <span>{Math.round(rawMaxClass * 0.75).toLocaleString()}</span>
-              <span>{Math.round(rawMaxClass * 0.5).toLocaleString()}</span>
-              <span>{Math.round(rawMaxClass * 0.25).toLocaleString()}</span>
+              <span>{Math.round(maxClass * 1.0)}</span>
+              <span>{Math.round(maxClass * 0.75)}</span>
+              <span>{Math.round(maxClass * 0.5)}</span>
+              <span>{Math.round(maxClass * 0.25)}</span>
               <span>0</span>
             </div>
 
             <div className="chart-areaHY">
               <div className="bar-chartHY">
                 {currentMainData.map((data, index) => (
-                  <div key={index} className="chart-groupHY">
-                    <div className="chart-bars-containerHY">
-                      <div className="barsHY">
-                        <div className="bar-wrapperHY">
-                          <div
-                            className="barHY primary-bar"
-                            style={{ height: getBarHeight(data.class, maxClass) }}
-                            data-value={data.class || 0}
-                          >
-                            <div className="bar-glowHY"></div>
-                          </div>
-                          <span className="bar-tooltipHY">클래스: {(data.class || 0).toLocaleString()}</span>
-                        </div>
-                      </div>
+                  <div key={index} className="month-groupHY">
+                    <div className="barsHY">
+                      <div
+                        className="barHY orange"
+                        style={{ height: getBarHeight(data.class, maxClass) }}
+                        title={`클래스: ${data.class.toLocaleString()}`}
+                      ></div>
+                      <div
+                        className="barHY yellow"
+                        style={{ height: getBarHeight(data.student, maxClass) }}
+                        title={`학생: ${data.student.toLocaleString()}`}
+                      ></div>
                     </div>
-                    <div className="chart-labelHY">
-                      <span className="label-textHY">{data.label}</span>
-                    </div>
+                    <span className="month-labelHY">{data.label}</span>
                   </div>
                 ))}
               </div>
+
+              {/* 초록색 라인 차트 */}
+              <svg className="line-chartHY green-line" viewBox="0 0 440 200">
+                <polyline
+                  points={currentMainData.map((data, index) => {
+                    const x = getXCoord(index, currentMainData.length);
+                    const y = getYCoordForValue(data.student, maxStudent);
+                    return `${x},${y}`;
+                  }).join(' ')}
+                  fill="none"
+                  stroke="#4CAF50"
+                  strokeWidth="1"
+                />
+                {currentMainData.map((data, index) => {
+                  const x = getXCoord(index, currentMainData.length);
+                  const y = getYCoordForValue(data.student, maxStudent);
+                  return (
+                    <circle
+                      key={index}
+                      cx={x}
+                      cy={y}
+                      r="4"
+                      fill="#4CAF50"
+                      title={`확정 수: ${data.student.toLocaleString()}`}
+                    />
+                  );
+                })}
+              </svg>
+
+              {/* 빨간색 점선 차트 */}
+              <svg className="line-chartHY red-line" viewBox="0 0 440 200">
+                <polyline
+                  points={currentMainData.map((data, index) => {
+                    const x = getXCoord(index, currentMainData.length);
+                    const y = getYCoordForRate(data.rate);
+                    return `${x},${y}`;
+                  }).join(' ')}
+                  fill="none"
+                  stroke="#FF5252"
+                  strokeWidth="1"
+                  strokeDasharray="1,2"
+                />
+                {currentMainData.map((data, index) => {
+                  const x = getXCoord(index, currentMainData.length);
+                  const y = getYCoordForRate(data.rate);
+                  return (
+                    <circle
+                      key={index}
+                      cx={x}
+                      cy={y}
+                      r="3"
+                      fill="#FF5252"
+                      title={`확정율: ${data.rate}%`}
+                    />
+                  );
+                })}
+              </svg>
             </div>
 
             <div className="chart-y-axis-rightHY">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
+              <span>100</span>
+              <span>75</span>
+              <span>50</span>
+              <span>25</span>
+              <span>0</span>
             </div>
           </div>
 
           <div className="chart-legendHY">
             <div className="legend-itemHY">
-              <span className="legend-colorHY orange-bgHY"></span>
+              <span className="legend-color orange-bgHY"></span>
               <span className="legend-textHY">클래스 수</span>
+            </div>
+            <div className="legend-itemHY">
+              <span className="legend-color green-lineHY"></span>
+              <span className="legend-textHY">학정 수</span>
+            </div>
+            <div className="legend-itemHY">
+              <span className="legend-color red-lineHY"></span>
+              <span className="legend-textHY">학정율 (%)</span>
             </div>
           </div>
 
-          {currentMainData.length > 0 && (
-            <div className="chart-stats-boxHY">
-              <div className="stats-rowHY">
-                <span className="stat-dotHY orangeHY"></span>
-                <span>클래스: {(currentMainData[currentMainData.length - 1]?.class || 0).toLocaleString()}</span>
-              </div>
+          <div className="chart-stats-boxHY">
+            <div className="stats-rowHY">
+              <span className="stat-dot orangeHY"></span>
+              <span>클래스 수: {currentMainData[currentMainData.length - 1]?.class.toLocaleString?.() || 0}</span>
             </div>
-          )}
+            <div className="stats-rowHY">
+              <span className="stat-dot greenHY"></span>
+              <span>확정 수: {currentMainData[currentMainData.length - 1]?.student.toLocaleString()}</span>
+            </div>
+            <div className="stats-rowHY">
+              <span>학정율 (%): {currentMainData[currentMainData.length - 1]?.rate}</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -292,7 +391,7 @@ const Dashboard = () => {
       <div className="trend-sectionHY">
         <div className="trend-containerHY">
           <div className="trend-headerHY">
-            <h3 className="trend-titleHY">방문자 수</h3>
+            <h3 className="trend-titleHY">방문자 수 </h3>
             <div className="trend-controlsHY">
               <button
                 className={`trend-btnHY ${trendChartPeriod === '월별' ? 'active' : ''}`}
@@ -325,25 +424,76 @@ const Dashboard = () => {
             </div>
 
             <div className="trend-areaHY">
-              {currentTrendData.length > 0 && (
-                <svg className="trend-svgHY" viewBox="0 0 400 150">
-                  <defs>
-                    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.8" />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.1" />
-                    </linearGradient>
-                  </defs>
+              <svg className="trend-svgHY" viewBox="0 0 400 150">
+                <defs>
+                  <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#42A5F5" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#42A5F5" stopOpacity="0.2" />
+                  </linearGradient>
+                </defs>
 
-                  {/* 영역 차트만 */}
+                {/* 영역 차트 */}
+                {currentTrendData?.length > 0 && (
                   <path
-                    d={`M 0 ${getTrendHeight(currentTrendData[0]?.value || 0, maxTrend)} ${currentTrendData.map((data, index) =>
-                      `L ${(index * 400) / (currentTrendData.length - 1)} ${getTrendHeight(data.value || 0, maxTrend)}`
+                    d={`M 0 ${getTrendHeight(currentTrendData[0].value, maxTrend)} ${currentTrendData.map((data, index) =>
+                      `L ${(index * 400) / (currentTrendData.length - 1)} ${getTrendHeight(data.value, maxTrend)}`
                     ).join(' ')
                       } L 400 150 L 0 150 Z`}
                     fill="url(#blueGradient)"
                   />
-                </svg>
-              )}
+                )}
+
+                {/* 라인 */}
+                <polyline
+                  points={currentTrendData.map((data, index) =>
+                    `${(index * 400) / (currentTrendData.length - 1)},${getTrendHeight(data.value, maxTrend)}`
+                  ).join(' ')}
+                  fill="none"
+                  stroke="#42A5F5"
+                  strokeWidth="3"
+                />
+
+                {/* 하이라이트 포인트  */}
+                {currentTrendData.length >= 3 && (
+                  <>
+                    <circle
+                      cx={(currentTrendData.length - 3) * 400 / (currentTrendData.length - 1)}
+                      cy={getTrendHeight(currentTrendData[currentTrendData.length - 3].value, maxTrend)}
+                      r="5"
+                      fill="#42A5F5"
+                    />
+                    <rect
+                      x={(currentTrendData.length - 3) * 400 / (currentTrendData.length - 1) - 40}
+                      y={getTrendHeight(currentTrendData[currentTrendData.length - 3].value, maxTrend) - 25}
+                      width="80"
+                      height="35"
+                      rx="6"
+                      fill="white"
+                      stroke="#42A5F5"
+                      strokeWidth="1"
+                    />
+                    <text
+                      x={(currentTrendData.length - 3) * 400 / (currentTrendData.length - 1)}
+                      y={getTrendHeight(currentTrendData[currentTrendData.length - 3].value, maxTrend) - 12}
+                      textAnchor="middle"
+                      fill="#42A5F5"
+                      fontSize="10"
+                      fontWeight="bold"
+                    >
+                      {currentTrendData[currentTrendData.length - 3].label}
+                    </text>
+                    <text
+                      x={(currentTrendData.length - 3) * 400 / (currentTrendData.length - 1)}
+                      y={getTrendHeight(currentTrendData[currentTrendData.length - 3].value, maxTrend)}
+                      textAnchor="middle"
+                      fill="#42A5F5"
+                      fontSize="9"
+                    >
+                      {/* 방문자 수: {currentTrendData[currentTrendData.length].value.toLocaleString()} */}
+                    </text>
+                  </>
+                )}
+              </svg>
             </div>
 
             <div className="trend-x-axisHY">
@@ -354,6 +504,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
     </Layout>
   );
 };

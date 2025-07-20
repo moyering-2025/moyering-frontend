@@ -197,3 +197,24 @@
 .KHJ-radio-buttons{
   margin-top: 10px;
 }
+
+.KHJ-pagination-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.KHJ-pagination-buttons button {
+  margin: 0 5px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+}
+
+.KHJ-pagination-buttons button.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+

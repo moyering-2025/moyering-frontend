@@ -11,6 +11,7 @@ import { tokenAtom, userAtom } from '../../../atoms';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LuMessageCircleMore } from "react-icons/lu";
+import Footer from '../../common/Footer';
 
 export default function MyFeed() {
   const [token, setToken] = useAtom(tokenAtom);
@@ -244,6 +245,7 @@ export default function MyFeed() {
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

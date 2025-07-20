@@ -124,3 +124,9 @@
 /* .backBtn:hover {
   background-color: #e0e0e0;
 } */
+
+.noneInq{
+  margin: 24px auto;
+    display: flex;
+    justify-content: center;
+}

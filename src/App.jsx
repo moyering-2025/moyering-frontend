@@ -115,7 +115,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    JSON.stringify(alarm) !== "{}" && setAlarms([...alarms, alarm]);
+    JSON.stringify(alarm) !== "{}" && setAlarms([alarm, ...alarms]);
   }, [alarm]);
 
   return (
@@ -158,7 +158,8 @@ function App() {
         <Route path="/user/gatheringWrite" element={<GatheringWrite />} />
         <Route path="/user/gatheringModify/:gatheringId" element={<GatheringModify />} />
         <Route path="/user/logout" />
-        <Route exact path="/user/chat" element={<DmChat />} />
+        <Route path="/user/chat" element={<DmChat />} />
+        <Route path="/user/chat2" element={<GatheringChat />} />
         <Route path="/user/feedCreate" element={<FeedCreate />} />
         <Route path="/user/feedEdit/:feedId" element={<FeedEdit />} />
         <Route path="/user/payment-success" element={<PaymentSuccess />} />

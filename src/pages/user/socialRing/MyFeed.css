@@ -4,7 +4,7 @@
   width: 1280px;
   margin: auto;
   display: flex;
-  /* justify-content: space-between; */
+  justify-content: space-between;
 }
 
 .KYM-myfeed-sidebar {
@@ -90,9 +90,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
-.KYM-myfeed-grid{
-  margin: 0 50px;
-}
+
 /* 카드 */
 .KYM-myfeed-container .KYM-myfeed-card {
   background: #fff;
@@ -101,9 +99,6 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-.KYM-myfeed-card{
-  width: 400px;
 }
 
 /* 헤더 */
@@ -168,10 +163,9 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  color: darkorange;
-  background-color: unset;;
+  background: rgba(255, 255, 255, 0.8);
   border: none;
-  font-size: 40px;
+  font-size: 20px;
   cursor: pointer;
   z-index: 2;
   padding: 5px 10px;

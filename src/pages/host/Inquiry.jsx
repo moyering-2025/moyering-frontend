@@ -11,97 +11,75 @@ const Inquiry = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [expandedIndex, setExpandedIndex] = useState(null);
-  const [iqResContent, setIqResContent] = useState(''); // 답변 내용
-  const user = useAtomValue(userAtom);
-  const [token, setToken] = useAtom(tokenAtom);
+  const [iqResContent, setIqResContent] = useState('');
   const [inquiry, setInquiry] = useState([]);
   const [selectedInquiryId, setSelectedInquiryId] = useState(null);
   const [replyStatus, setReplyStatus] = useState('');
-  const [pageInfo, setPageInfo] = useState([]);
+  const [pageInfo, setPageInfo] = useState({ totalPages: 1 });
+  const [currentPage, setCurrentPage] = useState(0);
 
+  const user = useAtomValue(userAtom);
+  const [token, setToken] = useAtom(tokenAtom);
   const location = useLocation();
 
-  // URL 파라미터에서 classId, calendarId 가져오기
   const getQueryParams = () => {
-    const queryParams = new URLSearchParams(location.search);  // URL 파라미터 가져오기
-    const classId = queryParams.get('classId');  // classId 가져오기
-    const calendarId = queryParams.get('calendarId');  // calendarId 가져오기
+    const queryParams = new URLSearchParams(location.search);
+    const classId = queryParams.get('classId');
+    const calendarId = queryParams.get('calendarId');
     return { classId, calendarId };
   };
 
-  // 데이터를 가져오는 함수
-  const fetchInquiries = (classId, calendarId) => {
+  const fetchInquiries = (classId, calendarId, page = 0) => {
     const params = {
       hostId: user.hostId,
-      classId: classId ? Number(classId) : undefined,  // classId가 존재하면 Number로 변환
-      calendarId: calendarId ? Number(calendarId) : undefined,  // calendarId도 마찬가지
-      page: 0,
-      size: 10,
+      searchFilter,
+      searchQuery,
+      startDate,
+      endDate,
+      replyStatus: replyStatus === '답변완료' ? 1 : (replyStatus === '답변대기' ? 0 : ''),
+      classId: classId ? Number(classId) : undefined,
+      calendarId: calendarId ? Number(calendarId) : undefined,
+      page,
+      size: 5,
     };
 
-    // `classId`와 `calendarId`에 맞는 문의 데이터를 API로 요청
-    token && myAxios(token, setToken).post("/host/inquiry/search", params)
+    token && myAxios(token, setToken).post('/host/inquiry/search', params)
       .then(res => {
-        setInquiry(res.data.content);  // 받은 데이터를 inquiry 상태에 저장
-        setPageInfo(res.data.pageInfo);  // 페이지 정보 설정
+        console.log(res.data);
+        setInquiry(res.data.content);
+        setPageInfo(res.data.pageInfo);
+        setCurrentPage(page);
       })
       .catch(err => console.error(err));
   };
 
-  // URL 파라미터가 바뀔 때마다 데이터 가져오기
   useEffect(() => {
-    const { classId, calendarId } = getQueryParams();  // classId, calendarId 파라미터 가져오기
-    fetchInquiries(classId, calendarId);  // 데이터를 가져오는 함수 호출
-  }, [location, token]);  // location이나 token이 변경될 때마다 실행
+    const { classId, calendarId } = getQueryParams();
+    fetchInquiries(classId, calendarId, currentPage);
+    console.log("🔍 보내는 replyStatus:", replyStatus === '답변완료' ? 1 : (replyStatus === '답변대기' ? 0 : ''));
 
-  // 필터링에 맞게 데이터 검색
-  useEffect(() => {
-    const { classId, calendarId } = getQueryParams();  // URL 파라미터에서 classId, calendarId 가져오기
+  }, [searchQuery, startDate, endDate, replyStatus, location, token, currentPage]);
 
-    // 필터 상태가 변경되면 handleSearch 호출
-    const params = {
-      hostId: user.hostId,
-      searchFilter,
-      searchQuery,
-      startDate,
-      endDate,
-      replyStatus: replyStatus === '답변완료' ? 1 : (replyStatus === '답변대기' ? 0 : ''),  // 답변 상태 필터
-      page: 0,
-      size: 10,
-      classId: classId ? Number(classId) : undefined,
-      calendarId: calendarId ? Number(calendarId) : undefined,
-    };
+  const goToPage = (page) => {
+    if (page >= 0 && page < pageInfo.allPage) {
+      const { classId, calendarId } = getQueryParams();
+      fetchInquiries(classId, calendarId, page);
+    }
+  };
 
-    // `handleSearch`를 호출해서 필터에 맞는 데이터를 API로 요청
-    token && myAxios(token, setToken).post("/host/inquiry/search", params)
-      .then(res => {
-        setInquiry(res.data.content);
-        setPageInfo(res.data.pageInfo);
-      })
-      .catch(err => console.error(err));
-  }, [replyStatus, searchQuery, startDate, endDate, location, token]);  // 필터와 URL 파라미터 변경 시마다 호출
-
-  // 검색 요청
   const handleSearch = () => {
-    const params = {
-      hostId: user.hostId,
-      searchFilter,
-      searchQuery,
-      startDate,
-      endDate,
-      replyStatus: replyStatus === '답변완료' ? 1 : (replyStatus === '답변대기' ? 0 : ''),  // 답변 상태 필터
-      page: 0,
-      size: 10,
-    };
+    setCurrentPage(0);
+  };
 
-    console.log("✅ 전송 데이터 확인:", JSON.stringify(params, null, 2));
-
-    token && myAxios(token, setToken).post("/host/inquiry/search", params)
-      .then(res => {
-        setInquiry(res.data.content);
-        setPageInfo(res.data.pageInfo);
-      })
-      .catch(err => console.error(err));
+  const handleReset = () => {
+    setSearchQuery('');
+    setSearchFilter('클래스명');
+    setStartDate('');
+    setEndDate('');
+    setReplyStatus('');
+    setCurrentPage(0);
+    const { classId, calendarId } = getQueryParams();
+    fetchInquiries(classId, calendarId, 0);
   };
 
   const toggleExpand = (index, inquiryId) => {
@@ -113,7 +91,7 @@ const Inquiry = () => {
     setSelectedInquiryId(inquiryId);
     setExpandedIndex(index);
     const existingReply = inquiry.find(item => item.inquiryId === inquiryId)?.iqResContent || '';
-    setIqResContent(existingReply); // Pre-fill with the existing response if any
+    setIqResContent(existingReply);
   };
 
   const handleReplySubmit = () => {
@@ -129,29 +107,16 @@ const Inquiry = () => {
         inquiryId: selectedInquiryId,
       }
     })
-      .then(res => {
-        console.log(res);
+      .then(() => {
         alert("답변이 등록되었습니다!");
         setIqResContent('');
         setExpandedIndex(null);
         setSelectedInquiryId(null);
 
-        return token && myAxios(token, setToken).get(`/host/inquiry?hostId=${user.hostId}`);
+        const { classId, calendarId } = getQueryParams();
+        fetchInquiries(classId, calendarId, currentPage);
       })
-      .then(res => {
-        setInquiry(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
-  const handleReset = () => {
-    setSearchQuery('');
-    setSearchFilter('클래스명');
-    setStartDate('');
-    setEndDate('');
-    setReplyStatus('');
+      .catch(err => console.error(err));
   };
 
   const handleStartDateChange = (e) => {
@@ -187,19 +152,9 @@ const Inquiry = () => {
         </div>
 
         <div className="KHJ-form-row">
-          <input
-            type="date"
-            value={startDate}
-            onChange={handleStartDateChange}
-            className="KHJ-inquiry-input"
-          />
+          <input type="date" value={startDate} onChange={handleStartDateChange} className="KHJ-inquiry-input" />
           <span>~</span>
-          <input
-            type="date"
-            value={endDate}
-            onChange={handleEndDateChange}
-            className="KHJ-inquiry-input"
-          />
+          <input type="date" value={endDate} onChange={handleEndDateChange} className="KHJ-inquiry-input" />
         </div>
 
         <div className="KHJ-form-row">
@@ -236,7 +191,6 @@ const Inquiry = () => {
               <span>{item.state === 1 ? '답변완료' : '답변대기'}</span>
             </div>
 
-            {/* 문의 내용 */}
             <div className="KHJ-inquiry-content-wrapper">
               <div style={{ float: 'left', padding: "0 2px 2px 2px", marginRight: "20px", color: "gray" }}>문의 <span style={{ color: "lightGray" }}>&nbsp;|</span></div>
               <div className="KHJ-inquiry-content">
@@ -244,12 +198,11 @@ const Inquiry = () => {
               </div>
             </div>
 
-            {/* 답변 폼 */}
             {expandedIndex === index && (
               <div className="KHJ-reply-dropdown">
                 <div className="KHJ-inquiry-content-wrapper">
                   <div style={{ float: 'left', padding: "2px", marginRight: "20px", color: "gray" }}>답변 <span style={{ color: "lightGray" }}>&nbsp;|</span></div>
-                  <form className="KHJ-reply-form" onSubmit={(e) => { e.preventDefault(); handleReplySubmit(); }} >
+                  <form className="KHJ-reply-form" onSubmit={(e) => { e.preventDefault(); handleReplySubmit(); }}>
                     <textarea
                       className="KHJ-reply-textarea"
                       placeholder={item.iqResContent || "답변을 입력하세요"}
@@ -264,6 +217,59 @@ const Inquiry = () => {
             )}
           </div>
         ))}
+
+        <div className="KHJ-pagination">
+          {pageInfo.allPage > 1 && (
+            <div className="KHJ-pagination">
+              {(() => {
+                const totalPage = pageInfo.allPage;
+                const currentPage = pageInfo.curPage; // 1부터 시작
+                const maxButtons = 5;
+
+                let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+                let end = start + maxButtons - 1;
+
+                if (end > totalPage) {
+                  end = totalPage;
+                  start = Math.max(1, end - maxButtons + 1);
+                }
+
+                const pages = [];
+
+                if (currentPage > 1) {
+                  pages.push(
+                    <button key="prev" onClick={() => goToPage(currentPage - 2)} className="KHJ-page-button">
+                      ◀ 이전
+                    </button>
+                  );
+                }
+
+                for (let i = start; i <= end; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      onClick={() => goToPage(i - 1)} // 0부터 시작하니까 -1
+                      className={`KHJ-page-button ${i === currentPage ? 'active' : ''}`}
+                    >
+                      {i}
+                    </button>
+                  );
+                }
+
+                if (currentPage < totalPage) {
+                  pages.push(
+                    <button key="next" onClick={() => goToPage(currentPage)} className="KHJ-page-button">
+                      다음 ▶
+                    </button>
+                  );
+                }
+
+                return pages;
+              })()}
+            </div>
+          )}
+
+        </div>
       </div>
     </>
   );

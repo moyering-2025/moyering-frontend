@@ -83,7 +83,7 @@ const Layout = ({ children }) => {
         <div className="header-leftHY">
           <div className="header-logoHY">
             <img 
-              src="/logo_managerHeader.png" 
+              src="/no-image_1.png" 
               alt="모여링 로고" 
               className="header-logo-iconHY"
               onClick={() => navigate('/admin/dashboard')}

@@ -275,7 +275,7 @@ const TabSchedule = ({ classData, setClassData, registerValidator }) => {
           </div>
         </div>
 
-        {schedule.dates.length > 0 && (
+        {/* {schedule.dates.length > 0 && (
           <div className="KHJ-selected-dates">
             <strong>선택한 날짜:</strong>
             <ul>
@@ -284,7 +284,7 @@ const TabSchedule = ({ classData, setClassData, registerValidator }) => {
               ))}
             </ul>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

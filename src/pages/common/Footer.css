@@ -16,3 +16,12 @@
 .soysoy img {
   width: 200px;
 }
+.footer-inner {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-inner2 {
+  display: flex;
+  flex-direction: column;
+}

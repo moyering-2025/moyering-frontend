@@ -217,11 +217,12 @@ const handleConfirmSettlement = async (settlementId, stats) => {
       case 'PENDING':
       case 'WT':
       case 'WP':  
-      case 'RQ':  
         return 'status-pendingHY';
       case 'COMPLETED':
       case 'CP':
         return 'status-completedHY';
+        case 'RQ' : 
+        return  'status_soy';
       default:
         return '';
     }
@@ -380,7 +381,7 @@ const handleConfirmSettlement = async (settlementId, stats) => {
                   <td className="bank-nameHY">{item.bankName || '-'}</td>
                   <td className="account-numHY">{item.accNum || '-'}</td>
                   <td className="statusHY">
-                    <span className={`status-badgeHY ${getStatusClass(item.settlementStatus)}`}>
+                    <span className={`status-badgeHY ${getStatusClass(item.settlementStatus)} `}>
                       {getStatusText(item.settlementStatus)}
                     </span>
                   </td>
@@ -389,13 +390,13 @@ const handleConfirmSettlement = async (settlementId, stats) => {
                       item.settlementStatus === 'WT' || 
                       item.settlementStatus === 'WP' || 
                       item.settlementStatus === 'RQ') ? (
-                            <button 
-                              className={`btn-settlementHY ${item.settlementStatus === 'RQ' ? 'request' : ''}`}
-                              onClick={() => handleSettlement(item)}
-                              disabled={loading}
-                            >
-                              {item.settlementStatus === 'RQ' ? '정산요청' : '정산하기'}
-                  </button>
+           <button 
+  className={`btn-settlementHY ${item.settlementStatus === 'RQ' ? 'request' : ''}`}
+  onClick={() => handleSettlement(item)}
+  disabled={loading}
+>
+  {item.settlementStatus === 'RQ' ? '정산요청' : '정산하기'}
+</button>
                     ) : (
                       <span className="action-disabledHY">
                         {(item.settlementStatus === 'CP') ? '정산완료' : '처리완료'}

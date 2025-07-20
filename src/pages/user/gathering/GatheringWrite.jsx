@@ -46,35 +46,16 @@ const getMaxDeadlineDateTime = (meetingDate) => {
 const validateDateTime = (formData) => {
   const errors = {};
   if (formData.meetingDate && formData.meetingDate < getTodayString()) {
-    errors.meetingDate = "모임 날짜는 오늘 이후여야 합니다.";
+    errors.meetingDate = "";
+    // errors.meetingDate = "모임 날짜는 오늘 이후여야 합니다.";
   }
 
   if (formData.startTime && formData.endTime) {
     if (formData.startTime >= formData.endTime) {
-      errors.timeRange = "종료 시간은 시작 시간보다 늦어야 합니다.";
+      errors.timeRange = "";
+      // errors.timeRange = "종료 시간은 시작 시간보다 늦어야 합니다.";
     }
   }
-
-//  if (formData.deadlineDateTime) {
-//   const minDeadlineString = getMinDeadlineDateTime(); // 그대로 사용
-//   const minDeadline = new Date(minDeadlineString); // 문자열 → Date 변환
-//   const userDeadline = new Date(formData.deadlineDateTime);
-
-//   const maxDeadline =
-//     formData.meetingDate &&
-//     new Date(`${formData.meetingDate}T23:59:59`);
-
-//   if (userDeadline.getTime() <= minDeadline.getTime()) {
-//     errors.deadlineDateTime = "신청 마감일은 현재 시간에서 최소 3시간 이후여야 합니다.";
-//   } else if (
-//     formData.meetingDate &&
-//     userDeadline.getTime() > maxDeadline.getTime()
-//   ) {
-//     errors.deadlineDateTime = "신청 마감일은 모임 날짜 이전이어야 합니다.";
-//   } else {
-//     errors.deadlineDateTime = "";
-//   }
-// }
 
 
   for (const key in errors) {

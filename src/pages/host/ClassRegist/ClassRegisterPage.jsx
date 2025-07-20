@@ -92,13 +92,13 @@ const ClassRegisterPage = () => {
       return;
     } 
     const validateCurrent = validators.current[activeTab];
-    if (validateCurrent) {
-      const isValid = await validateCurrent();
-      if (!isValid) {
-        alert('현재 탭의 정보를 모두 입력해주세요.');
-        return;
-      }
-    }
+    // if (validateCurrent) {
+    //   const isValid = await validateCurrent();
+    //   if (!isValid) {
+    //     alert('현재 탭의 정보를 모두 입력해주세요.');
+    //     return;
+    //   }
+    // }
     setActiveTab(nextTabIndex);
   };
 

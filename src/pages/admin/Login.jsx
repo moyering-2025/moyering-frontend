@@ -56,7 +56,7 @@ const Login = () => {
      <div className="login-boxHY">
        <div className="logo-sectionHY">
          <div className="logoHY">
-           <img src="/logo_managerLogin.png" alt="모여링 로고" className="logo-imageHY" />
+           <img src="/logo_managerLogin_2.png" alt="모여링 로고" className="logo-imageHY" />
          </div>
        </div>
 

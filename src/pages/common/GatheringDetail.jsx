@@ -269,7 +269,7 @@ export default function GatheringDetail() {
           followers: organizer.followers || 0, // followers가 객체가 아닌 숫자값으로 설정
           intro: organizer.intro || "",
           tags: organizerCategories,
-          userBadgeImg: organizer.userBadgeImg || "badge_moyainssa.png",
+          userBadgeImg: organizer.userBadgeImg || "moyainssa",
         });
 
         setMembers(
@@ -282,7 +282,7 @@ export default function GatheringDetail() {
             aspiration: m.aspiration,
             isApprove: m.isApprove,
             userId: m.userId,
-            userBadgeImg: m.userBadgeImg || "badge_moyainssa.png",
+            userBadgeImg: m.userBadgeImg || "moyainssa",
           }))
         );
 
@@ -715,7 +715,7 @@ export default function GatheringDetail() {
                 </h3>
                 <div className="GatheringDetail_organizer-info_osk">
                   <div className="GatheringDetail_organizer-avatar_osk">
-                    <img src={`/public/${organizerData.profileImage}.png`}
+                    <img src={ `${url}/image?filename=${organizerData.profileImage}`}
                       // alt={organizerData.nickname}
                       className="GatheringDetail_organizer-profile-image_osk"
                     />
@@ -801,7 +801,7 @@ export default function GatheringDetail() {
                               <h4 className="GatheringDetail_member-name_osk">
                                 <span className="GatheringDetail_verified_osk">  {member.nickName}
                                   {/* <img className="GatheringDetail_member-userBadgeImg_osk" src={`/public/${member.userBadgeImg}`} /> */}
-<img className="GatheringDetail_member-userBadgeImg_osk"  src={`/badge_${member.userBadgeImg}.png`} alt="배지" />
+                                <img className="GatheringDetail_member-userBadgeImg_osk"  src={`/badge_${member.userBadgeImg}.png`} alt="배지" />
                                 </span>
                               </h4>
                               <p className="GatheringDetail_member-description_osk">

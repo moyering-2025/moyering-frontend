@@ -4,6 +4,7 @@ import badgeIcon from './icons/badge.jpg';
 import heartOutline from './icons/heart-outline.png';
 import heartFilled from './icons/heart-filled.png';
 import commentIcon from './icons/comment.svg';
+import Footer from '../../common/Footer';
 
 
 
@@ -24,6 +25,7 @@ export default function ScrapList() {
   };
 
   return (
+    <>
     <div className="KYM-scraplist-container">
       <h2 className="KYM-scraplist-header">📑 스크랩 목록</h2>
       <div className="KYM-scraplist-grid">
@@ -65,5 +67,7 @@ export default function ScrapList() {
         ))}
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }

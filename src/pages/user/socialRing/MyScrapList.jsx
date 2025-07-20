@@ -84,6 +84,7 @@ export default function MyScrapPage() {
   };
 
   return (
+    <>
     <div className="KYM-feed-page">
       <Header />
       <div className='KYM-myfeed-wrapper'>
@@ -186,5 +187,6 @@ export default function MyScrapPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

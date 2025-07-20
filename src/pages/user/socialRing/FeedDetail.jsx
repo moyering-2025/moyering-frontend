@@ -15,6 +15,7 @@ import { LuMessageCircleMore } from "react-icons/lu";
 import heartOutline from './icons/heart-outline.png';
 import heartFilled from './icons/heart-filled.png';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../../common/Footer';
 
 export default function FeedDetail() {
   // Jotai atom에서 토큰 읽어오기
@@ -257,7 +258,7 @@ export default function FeedDetail() {
         </div>
         <p className="KYM-comment-text">
           {c.parentWriterId && (
-            <span style={{ color: '#888', fontWeight: 'bold' }}>
+            <span style={{ color: '#888', fontWeight: 'bold', fontSize:'14px' }}>
               @{c.parentWriterId}
             </span>
           )}{" "}
@@ -311,6 +312,12 @@ export default function FeedDetail() {
               disabled={!isLoggedIn}
               value={replyText}
               onChange={e => setReplyText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  replysubmit();
+                }
+              }}
             />
             <button
               className="KYM-input-post"
@@ -568,6 +575,7 @@ export default function FeedDetail() {
           onSubmit={({ reason, detail }) => { console.log(reason, detail); closeReport(); }}
         />
       </div >
+      <Footer/>
     </>
   );
 }

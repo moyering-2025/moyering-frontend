@@ -488,7 +488,7 @@ export default function MyGatheringList() {
                                   <img src={`${url}/image?filename=${applicant.profile}`} alt={applicant.nickName} className="MyGatheringList_info_applicant-profile_osk" />
                                   <strong className="MyGatheringList_applicant-name_osk">{applicant.nickName}</strong>
                                   {applicant.aspiration && (
-                                    <p className="MyGatheringList_applicant-aspiration_osk">지원동기: {applicant.aspiration}</p>
+                                    <p className="MyGatheringList_applicant-aspiration_osk">지원동기 및 포부: {applicant.aspiration}</p>
                                   )}
                                   <div className="MyGatheringList_applicant-tags_osk">
                                     {applicant.tags.map((t, idx) => (

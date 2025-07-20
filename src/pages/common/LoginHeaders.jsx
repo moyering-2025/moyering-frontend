@@ -7,7 +7,7 @@ export default function LoginHeader() {
   return (
     <header className="KHJ-join-header">
       <img
-        src="/logo.png"
+        src="/no-image_1.png"
         className="KHJ-join-logo"
         onClick={() => navigate('/')}
         alt="로고"

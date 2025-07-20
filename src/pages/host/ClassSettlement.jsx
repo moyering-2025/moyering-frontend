@@ -3,6 +3,7 @@ import './ClassSettlement.css';
 import { tokenAtom, userAtom } from './../../atoms';
 import { useAtom, useAtomValue } from 'jotai';
 import { myAxios } from './../../config';
+import dayjs from 'dayjs';
 
 const ClassSettlement = () => {
   const [startDate, setStartDate] = useState('');
@@ -15,24 +16,24 @@ const ClassSettlement = () => {
   const [curPage, setCurPage] = useState(1);
 
   const fetchData = (startDateParam = startDate, endDateParam = endDate, pageParam = curPage) => {
-  const params = {
-    hostId: user.hostId,
-    startDate: startDateParam,
-    endDate: endDateParam,
-    page: pageParam - 1,
-    size: 10,
+    const params = {
+      hostId: user.hostId,
+      startDate: startDateParam,
+      endDate: endDateParam,
+      page: pageParam - 1,
+      size: 10,
+    };
+    token &&
+      myAxios(token, setToken)
+        .post("/host/settlementList", params)
+        .then(res => {
+          console.log(res.data)
+          setSettlementList(res.data.content);
+          setPageInfo(res.data.pageInfo);
+          setCurPage(res.data.pageInfo.curPage); // 갱신
+        })
+        .catch(err => console.log(err));
   };
-  token &&
-    myAxios(token, setToken)
-      .post("/host/settlementList", params)
-      .then(res => {
-        console.log(res.data)
-        setSettlementList(res.data.content);
-        setPageInfo(res.data.pageInfo);
-        setCurPage(res.data.pageInfo.curPage); // 갱신
-      })
-      .catch(err => console.log(err));
-};
 
   useEffect(() => {
     fetchData();
@@ -94,6 +95,23 @@ const ClassSettlement = () => {
       })
   }
 
+  const isSettlementAllowed = (settlementDateStr, settlementStatus) => {
+    // 1. RQ이면 무조건 비활성화
+    if (settlementStatus === 'RQ') return false;
+
+    // 2. WT인 경우, 정산일이 "오늘보다 7일 이상 전"이면 활성화
+    if (settlementStatus === 'WT') {
+      const today = dayjs();
+      const settlementDate = dayjs(settlementDateStr);
+
+      // 날짜가 '오늘 - 7일'보다 같거나 이전이면 활성화
+      return settlementDate.isBefore(today.subtract(7, 'day')) || settlementDate.isSame(today.subtract(7, 'day'), 'day');
+    }
+
+    // 그 외는 모두 비활성화
+    return false;
+  };
+
 
   const totalAmount = settlementList
     .filter((s) => s.settlementStatus === 'CP')
@@ -124,7 +142,7 @@ const ClassSettlement = () => {
 
       <div className="KHJ-settlement-result">
         <div className="KHJ-settlement-header">
-          <span>총 정산된 금액 : {totalAmount.toLocaleString()}</span>
+          {/* <span>총 정산된 금액 : {totalAmount.toLocaleString()}</span> */}
         </div>
 
         <table className="KHJ-settlement-table">
@@ -150,8 +168,8 @@ const ClassSettlement = () => {
                     item.settlementStatus === 'RQ' ? '정산요청완료' : '정산완료'}
                 </td>
                 <td>
-                  {item.settlementStatus === 'WT' ? (
-                    <button className="KHJ-settle-btn" onClick={()=>settleRequest(item.settlementId)}>정산 요청</button>
+                  {isSettlementAllowed(item.settlementDate, item.settlementStatus) ? (
+                    <button className="KHJ-settle-btn" onClick={() => settleRequest(item.settlementId)}>정산 요청</button>
                   ) : (
                     <button className="KHJ-cancel-btn" disabled>정산 요청</button>
                   )}

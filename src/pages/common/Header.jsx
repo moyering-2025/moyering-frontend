@@ -5,7 +5,7 @@ import { LuMessageCircleMore } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Form, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Badge } from "reactstrap";
 import "./Header.css";
-import logoImage from "/logo.png";
+import logoImage from "/no-image_1.png";
 import React, { useEffect, useState, useCallback } from "react";
 import { useAtomValue, useSetAtom, useAtom } from "jotai";
 import { tokenAtom, userAtom, alarmsAtom } from "../../atoms";

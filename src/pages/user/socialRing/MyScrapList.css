@@ -2,10 +2,11 @@
 
 /* ─── 전체 컨테이너 ─── */
 .KYM-feed-container {
-  max-width: 100%px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
+  min-width: 900px!important; /* 최소 너비 설정 */
 }
 .KYM-myfeed-wrapper{
   margin-left: 100px;

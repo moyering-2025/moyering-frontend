@@ -7,6 +7,7 @@ import './MyProfilePage.css';
 import DaumPostcode from 'react-daum-postcode';
 import Header from '../../../common/Header';
 import Sidebar from './Sidebar';
+import Footer from '../../../common/Footer';
 
 export default function MyProfilePage() {
 
@@ -292,6 +293,7 @@ export default function MyProfilePage() {
                     </div>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 }

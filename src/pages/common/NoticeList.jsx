@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import Footer from "../../components/Footer";
+import Footer from "./Footer";
 import './NoticeList.css';
-import logoImage from "/logo.png";
+import logoImage from "/no-image_1.png";
 import { useAtomValue, useSetAtom, useAtom } from "jotai";
 import { tokenAtom, userAtom, alarmsAtom } from "../../atoms";
 import { myAxios, url } from "../../config";

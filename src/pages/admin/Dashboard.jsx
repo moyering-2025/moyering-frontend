@@ -289,62 +289,7 @@ const Dashboard = () => {
                 ))}
               </div>
 
-              {/* 초록색 라인 차트 */}
-              <svg className="line-chartHY green-line" viewBox="0 0 440 200">
-                <polyline
-                  points={currentMainData.map((data, index) => {
-                    const x = getXCoord(index, currentMainData.length);
-                    const y = getYCoordForValue(data.student, maxStudent);
-                    return `${x},${y}`;
-                  }).join(' ')}
-                  fill="none"
-                  stroke="#4CAF50"
-                  strokeWidth="1"
-                />
-                {currentMainData.map((data, index) => {
-                  const x = getXCoord(index, currentMainData.length);
-                  const y = getYCoordForValue(data.student, maxStudent);
-                  return (
-                    <circle
-                      key={index}
-                      cx={x}
-                      cy={y}
-                      r="4"
-                      fill="#4CAF50"
-                      title={`확정 수: ${data.student.toLocaleString()}`}
-                    />
-                  );
-                })}
-              </svg>
-
-              {/* 빨간색 점선 차트 */}
-              <svg className="line-chartHY red-line" viewBox="0 0 440 200">
-                <polyline
-                  points={currentMainData.map((data, index) => {
-                    const x = getXCoord(index, currentMainData.length);
-                    const y = getYCoordForRate(data.rate);
-                    return `${x},${y}`;
-                  }).join(' ')}
-                  fill="none"
-                  stroke="#FF5252"
-                  strokeWidth="1"
-                  strokeDasharray="1,2"
-                />
-                {currentMainData.map((data, index) => {
-                  const x = getXCoord(index, currentMainData.length);
-                  const y = getYCoordForRate(data.rate);
-                  return (
-                    <circle
-                      key={index}
-                      cx={x}
-                      cy={y}
-                      r="3"
-                      fill="#FF5252"
-                      title={`확정율: ${data.rate}%`}
-                    />
-                  );
-                })}
-              </svg>
+        
             </div>
 
             <div className="chart-y-axis-rightHY">

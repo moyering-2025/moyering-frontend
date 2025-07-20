@@ -162,7 +162,7 @@ export default function ClassRingDetailInquiryList({classId}) {
                     &gt;
                 </button>
                 </div>
-                : <div className={styles.noneInq}>문의이 존재하지 않습니다.</div>
+                : <div className={styles.noneInq}>문의가 존재하지 않습니다.</div>
                 }
             <div className={styles.questionButtonWrap}>
                 </div>

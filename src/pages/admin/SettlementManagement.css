@@ -68,6 +68,12 @@
   border: 1px solid #ef4444;
 }
 
+.status_soy {
+  background-color: #fcc9ff !important;
+  color: #9e33a3 !important;
+  border: 1px solid #f200ff !important;
+}
+
 /* 3. 액션 버튼 그룹 스타일 (새로 추가) */
 .action-buttonsHY {
   display: flex;

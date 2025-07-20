@@ -10,6 +10,7 @@ import { myAxios, url } from '../../../config';
 import { useAtom } from 'jotai';
 import { tokenAtom, userAtom } from '../../../atoms';
 import { useSearchParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export default function Chat() {
   const [activeTab, setActiveTab] = useState('DM');
@@ -27,7 +28,7 @@ export default function Chat() {
   const [messageOffset, setMessageOffset] = useState(0);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const messagesContainerRef = useRef(null);
-
+  const navigate = useNavigate();
 
 
   // ✅ 앱 시작 시 WebSocket 연결만 해두기
@@ -101,7 +102,7 @@ export default function Chat() {
       token && myAxios(token, setToken).get(`/dm-test/recent?roomId=${selectedRoom}&count=20`)
         .then(res => {
           setMessages(res.data.reverse().map(msg => ({
-            sender: msg.senderId === user.id ? "나" : "상대방",
+            sender: msg.senderId === user.id ? "나" : selectedOpponent?.nickname,
             text: msg.content,
             type: msg.senderId === user.id ? 'my-message' : 'message',
             time: msg.sendAt,
@@ -114,45 +115,45 @@ export default function Chat() {
 
       // ✅ subscribe
       stompClient.current.subscribe(`/topic/dmRoom:${selectedRoom}`, (msg) => {
-  console.log("📩 받은 메시지 RAW:", msg.body);
+        console.log("📩 받은 메시지 RAW:", msg.body);
 
-  if (msg.body === "readUpdated") {
-    console.log("👀 읽음 상태 변경, 메시지 직접 갱신");
-    setMessages(prev =>
-      prev.map(m =>
-        m.type === 'my-message' ? { ...m, isRead: true } : m
-      )
-    );
-    return;
-  }
+        if (msg.body === "readUpdated") {
+          console.log("👀 읽음 상태 변경, 메시지 직접 갱신");
+          setMessages(prev =>
+            prev.map(m =>
+              m.type === 'my-message' ? { ...m, isRead: true } : m
+            )
+          );
+          return;
+        }
 
-  let received;
-  try {
-    received = JSON.parse(msg.body);
-    console.log("✅ JSON 메시지:", received);
-  } catch (e) {
-    console.error("JSON parse 실패:", e, msg.body);
-    return;
-  }
+        let received;
+        try {
+          received = JSON.parse(msg.body);
+          console.log("✅ JSON 메시지:", received);
+        } catch (e) {
+          console.error("JSON parse 실패:", e, msg.body);
+          return;
+        }
 
-  if (received.senderId !== user.id) {
-    if (selectedRoom === received.roomId) {
-      myAxios(token, setToken).post(`/user/dm/mark-read`, null, {
-        params: { roomId: selectedRoom, userId: user.id }
-      }).then(() => console.log("✅ 실시간 읽음 처리 완료"))
-        .catch(err => console.error("읽음 처리 오류:", err));
-    }
+        if (received.senderId !== user.id) {
+          if (selectedRoom === received.roomId) {
+            myAxios(token, setToken).post(`/user/dm/mark-read`, null, {
+              params: { roomId: selectedRoom, userId: user.id }
+            }).then(() => console.log("✅ 실시간 읽음 처리 완료"))
+              .catch(err => console.error("읽음 처리 오류:", err));
+          }
 
-    setMessages(prev => [...prev, {
-      sender: "상대방",
-      text: received.content,
-      type: 'message',
-      time: received.sendAt,
-      isRead: received.isRead
-    }]);
-    setIsNewMessage(true);
-  }
-});
+          setMessages(prev => [...prev, {
+            sender: selectedOpponent?.nickname,
+            text: received.content,
+            type: 'message',
+            time: received.sendAt,
+            isRead: received.isRead
+          }]);
+          setIsNewMessage(true);
+        }
+      });
 
 
       // ✅ 읽음 처리 API 호출
@@ -222,7 +223,7 @@ export default function Chat() {
         console.log("🔥 msg:", msg);  // 여기서 isRead 나오는지 확인
         console.log("🔥 msg.sendAt =", msg.sendAt);
         return {
-          sender: msg.senderId === user.id ? "나" : "상대방",
+          sender: msg.senderId === user.id ? "나" : selectedOpponent?.nickname,
           text: msg.content,
           type: msg.senderId === user.id ? 'my-message' : 'message',
           time: msg.sendAt,
@@ -270,7 +271,7 @@ export default function Chat() {
     try {
       const res = await myAxios(token, setToken).get(`/dm-test/recent?roomId=${selectedRoom}&count=20`);
       setMessages(res.data.reverse().map(msg => ({
-        sender: msg.senderId === user.id ? "나" : "상대방",
+        sender: msg.senderId === user.id ? "나" : selectedOpponent?.nickname,
         text: msg.content,
         type: msg.senderId === user.id ? 'my-message' : 'message',
         time: msg.sendAt,
@@ -289,7 +290,15 @@ export default function Chat() {
         <div className="GatheringChat_main-content_osk">
           <aside className="GatheringChat_sidebar_osk">
             <div className="GatheringChat_chat-tabs_osk">
-              <button className={`GatheringChat_tab_osk ${activeTab === '개더링' ? 'GatheringChat_active_osk' : ''}`} onClick={() => setActiveTab('개더링')}>개더링</button>
+              <button
+                className={`GatheringChat_tab_osk ${activeTab === '게더링' ? 'GatheringChat_active_osk' : ''}`}
+                onClick={() => {
+                  setActiveTab('게더링');
+                  navigate('/user/chat2');
+                }}
+              >
+                게더링
+              </button>
               <button className={`GatheringChat_tab_osk ${activeTab === 'DM' ? 'GatheringChat_active_osk' : ''}`} onClick={() => setActiveTab('DM')}>DM</button>
             </div>
             <div className="GatheringChat_chat-room-list_osk">
@@ -321,11 +330,11 @@ export default function Chat() {
             <div className="GatheringChat_chat-header_osk">
               {selectedRoom ? (
                 <>
-                  <img src={selectedOpponent?.profile || '/default-profile.png'} alt="상대 프로필" style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }} />
+                  {/* <img src={selectedOpponent?.profile || '/default-profile.png'} alt="상대 프로필" style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }} /> */}
                   <h2>{selectedOpponent?.nickname}</h2>
                 </>
-              ) : <h2>채팅방을 선택하세요.</h2>}
-              <button className="GatheringChat_menu-btn_osk"><HiOutlineMenu /></button>
+              ) : <h2>채팅방을 선택해주세요</h2>}
+              {/* <button className="GatheringChat_menu-btn_osk"><HiOutlineMenu /></button> */}
             </div>
 
             <div className="GatheringChat_chat-messages_osk" onScroll={handleScroll} ref={messagesContainerRef}>

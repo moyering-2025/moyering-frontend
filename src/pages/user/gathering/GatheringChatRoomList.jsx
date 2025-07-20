@@ -89,113 +89,117 @@ export default function GatheringChatRoomList() {
               >
                 게더링
               </button>
-              <button className={`GatheringChat_tab_osk ${activeTab === 'DM' ? 'GatheringChat_active_osk' : ''}`}
-                onClick={() => setActiveTab('DM')}
+              <button
+                className={`GatheringChat_tab_osk ${activeTab === 'DM' ? 'GatheringChat_active_osk' : ''}`}
+                onClick={() => {
+                  setActiveTab('DM');
+                  navigate('/user/chat');
+                }}
               >
-                DM
-              </button>
-              {activeTab === '게더링' && (
-                <Dropdown
-                  isOpen={filterOpen}
-                  toggle={toggle}
-                  direction={"down"}
-                  className="GatheringChat_filter-dropdown_osk"
+              DM
+            </button>
+            {activeTab === '게더링' && (
+              <Dropdown
+                isOpen={filterOpen}
+                toggle={toggle}
+                direction={"down"}
+                className="GatheringChat_filter-dropdown_osk"
+              >
+                <DropdownToggle
+                  tag="button"
+                  className="GatheringChat_filter-toggle_osk"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: '8px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '4px',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
-                  <DropdownToggle
-                    tag="button"
-                    className="GatheringChat_filter-toggle_osk"
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: '8px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '4px',
-                      transition: 'background-color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                  <IoFilter size={20} color="#666" />
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem header>필터 옵션</DropdownItem>
+                  <DropdownItem
+                    onClick={() => handleFilterSelect('전체')}
+                    className={selectedFilter === '전체' ? 'active' : ''}
                   >
-                    <IoFilter size={20} color="#666" />
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem header>필터 옵션</DropdownItem>
-                    <DropdownItem
-                      onClick={() => handleFilterSelect('전체')}
-                      className={selectedFilter === '전체' ? 'active' : ''}
-                    >
-                      전체
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => handleFilterSelect('활성화')}
-                      className={selectedFilter === '활성화' ? 'active' : ''}
-                    >
-                      활성화
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => handleFilterSelect('비활성화')}
-                      className={selectedFilter === '비활성화' ? 'active' : ''}
-                    >
-                      비활성화
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              )}
-            </div>
-
-            <div className="GatheringChat_chat-room-list_osk">
-              {filteredChatRooms.map(room => (
-                <div
-                  key={`room-${room.gatheringId}`}
-                  className={`GatheringChat_chat-room-item_osk ${selectedRoomId === room.gatheringId ? ' GatheringChat_chat-room-selected-item_osk' : ''}`}
-                  onClick={() => handleRoomClick(room.gatheringId)}
-                >
-                  <div className="GatheringChat_room-avatar_osk">
-                    {room.thumbnailFileName && (
-                      <img
-                        src={`${url}/image?filename=${room.thumbnailFileName}`}
-                        alt={room.gatheringTitle}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
-                      />
-                    )}
-                  </div>
-                  <div className="GatheringChat_room-info_osk">
-                    <div className="GatheringChat_room-name_osk">{room.gatheringTitle}</div>
-                    <div className="GatheringChat_room-last-message_osk">
-                      모임일: {room.meetingDate}
-                    </div>
-                    {/* 상태 표시 추가 (선택사항) */}
-                    <div className="GatheringChat_room-status_osk">
-                      <span className={`status-badge ${availableRooms.includes(room) ? 'active' : 'inactive'}`}>
-                        {availableRooms.includes(room) ? '활성화' : '비활성화'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </aside>
-
-          {/* Chat Area */}
-          {selectedRoomId ? (
-            <GatheringChatRoom
-              gatheringId={selectedRoomId}
-              roomTitle={selectedRoom?.gatheringTitle || '채팅방'}
-              roomStatus={availableRooms.includes(selectedRoom) ? '활성화' : '비활성화'}
-              ownerUserId={selectedRoom?.organizerUserId || null}
-            />
-          ) : (
-            <main className="GatheringChat_chat-area_osk">
-              <div className="GatheringChat_chat-header_osk">
-                <h2>채팅방을 선택해주세요</h2>
-              </div>
-            </main>
-          )}
+                    전체
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => handleFilterSelect('활성화')}
+                    className={selectedFilter === '활성화' ? 'active' : ''}
+                  >
+                    활성화
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => handleFilterSelect('비활성화')}
+                    className={selectedFilter === '비활성화' ? 'active' : ''}
+                  >
+                    비활성화
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            )}
         </div>
-      </div>
-      <Footer />
+
+        <div className="GatheringChat_chat-room-list_osk">
+          {filteredChatRooms.map(room => (
+            <div
+              key={`room-${room.gatheringId}`}
+              className={`GatheringChat_chat-room-item_osk ${selectedRoomId === room.gatheringId ? ' GatheringChat_chat-room-selected-item_osk' : ''}`}
+              onClick={() => handleRoomClick(room.gatheringId)}
+            >
+              <div className="GatheringChat_room-avatar_osk">
+                {room.thumbnailFileName && (
+                  <img
+                    src={`${url}/image?filename=${room.thumbnailFileName}`}
+                    alt={room.gatheringTitle}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                  />
+                )}
+              </div>
+              <div className="GatheringChat_room-info_osk">
+                <div className="GatheringChat_room-name_osk">{room.gatheringTitle}</div>
+                <div className="GatheringChat_room-last-message_osk">
+                  모임일: {room.meetingDate}
+                </div>
+                {/* 상태 표시 추가 (선택사항) */}
+                <div className="GatheringChat_room-status_osk">
+                  <span className={`status-badge ${availableRooms.includes(room) ? 'active' : 'inactive'}`}>
+                    {availableRooms.includes(room) ? '활성화' : '비활성화'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      {/* Chat Area */}
+      {selectedRoomId ? (
+        <GatheringChatRoom
+          gatheringId={selectedRoomId}
+          roomTitle={selectedRoom?.gatheringTitle || '채팅방'}
+          roomStatus={availableRooms.includes(selectedRoom) ? '활성화' : '비활성화'}
+          ownerUserId={selectedRoom?.organizerUserId || null}
+        />
+      ) : (
+        <main className="GatheringChat_chat-area_osk">
+          <div className="GatheringChat_chat-header_osk">
+            <h2>채팅방을 선택해주세요</h2>
+          </div>
+        </main>
+      )}
     </div>
+      </div >
+    <Footer />
+    </div >
   );
 }
